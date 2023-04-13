@@ -1,0 +1,27 @@
+<%- include('partials/header') %>
+
+<h1>Compose</h1>
+
+<form action="/compose" method="post">
+  <label for="postTitle" class="form-label">Title</label>
+  <div class="input-group mb-3">
+    <input
+      type="text"
+      class="form-control"
+      aria-describedby="basic-addon1"
+      name="postTitle"
+    />
+  </div>
+  <label for="postText" class="form-label">Post</label>
+  <div class="input-group">
+    <textarea
+      id="textarea"
+      class="form-control"
+      aria-label="With textarea"
+      name="postText"
+    ></textarea>
+  </div>
+  <button type="submit" class="btn btn-outline-primary mt-2">Primary</button>
+</form>
+
+<%- include('partials/footer') %>
