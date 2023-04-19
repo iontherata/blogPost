@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const _ = require("lodash");
 
 const homeStartingContent =
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur dolorum blanditiis architecto nihil dolores quae debitis velit ipsa mollitia, laudantium quaerat perferendis consequatur totam iste sed, earum, pariatur suscipit veritatis ducimus accusamus repellat harum! Natus molestias libero delectus eveniet, accusamus eum? Accusamus delectus odio saepe suscipit ullam eos voluptatibus, asperiores dolore non ";
@@ -44,6 +45,18 @@ app.post("/compose", function (req, res) {
   posts.push(post);
 
   res.redirect("/");
+});
+
+app.get("/posts/:blogPost", function (req, res) {
+  
+  const requestedBlogPost = _.lowerCase(req.params.blogPost);
+
+  for (let post of posts) {
+    const storedTitle = _.lowerCase(post.title);
+    if (storedTitle === requestedBlogPost) {
+      res.render("blog", { title: post.title, text: post.text });
+    }
+  }
 });
 
 
