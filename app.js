@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require("lodash");
+const mongoose = require("mongoose");
 
 const homeStartingContent =
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur dolorum blanditiis architecto nihil dolores quae debitis velit ipsa mollitia, laudantium quaerat perferendis consequatur totam iste sed, earum, pariatur suscipit veritatis ducimus accusamus repellat harum! Natus molestias libero delectus eveniet, accusamus eum? Accusamus delectus odio saepe suscipit ullam eos voluptatibus, asperiores dolore non ";
@@ -19,11 +20,54 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-let posts = [];
+mongoose.connect("mongodb://localhost:27017/blogDB");
+
+const blogSchema = new mongoose.Schema({
+  title: String,
+  text: String,
+});
+
+const Blog = mongoose.model("Blog", blogSchema);
+
+const blog1 = new Blog({
+  title: "Welcome",
+  text: "lorem50",
+});
+
+const blog2 = new Blog({
+  title: "to the",
+  text: "lorem100",
+});
+
+const blog3 = new Blog({
+  title: "lands between",
+  text: "lorem150",
+});
+
+const allBlogs = [blog1, blog2, blog3];
 
 app.get("/", function (req, res) {
-  res.render("home", { pageContent: homeStartingContent, posts: posts });
+  Blog.find({})
+    .then(function (foundItems) {
+      if (foundItems.length === 0) {
+        Blog.insertMany(allBlogs)
+          .then(function () {
+            console.log("Inserted to DB");
+          })
+          .catch(function (err) {
+            console.log(err);
+          });
+          res.redirect('/')
+      } else {
+        res.render("home", {pageContent: homeStartingContent, posts: foundItems});
+      }  
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
 });
+
+
 
 app.get("/about", function (req, res) {
   res.render("about", { pageContent: aboutContent });
@@ -48,7 +92,6 @@ app.post("/compose", function (req, res) {
 });
 
 app.get("/posts/:blogPost", function (req, res) {
-  
   const requestedBlogPost = _.lowerCase(req.params.blogPost);
 
   for (let post of posts) {
@@ -58,12 +101,6 @@ app.get("/posts/:blogPost", function (req, res) {
     }
   }
 });
-
-
-
-
-
-
 
 app.listen(3000, function () {
   console.log("HELLO WORLD");
