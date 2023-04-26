@@ -1,12 +1,12 @@
 .footer-basic {
-  padding: 40px 0;
+  padding: 10px 0;
   background-color: #ffffff;
   color: #4b4c4d;
   
 }
 
 .footer-basic .copyright {
-  margin-top: 15px;
+  margin-top: 05px;
   text-align: center;
   font-size: 13px;
   color: #aaa;
@@ -15,6 +15,10 @@
 
 .navbar {
   margin-bottom: 30px;
+}
+
+.container {
+  margin-bottom: 50px
 }
 
 .container-fluid{
@@ -28,6 +32,7 @@
 #navbarSupportedContent span:hover {
   color: #00b4d8;
 }
+
 
 #textarea {
   height: 200px

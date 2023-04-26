@@ -1,17 +1,30 @@
 <%- include('partials/header') %>
+
 <h2>Home Page</h2>
 
 <p><%= pageContent %></p>
 
 <%for(post of posts) { %>
-    <div>
-        <h2> <%=post.title%> </h2>
-        <p> <%=post.text.substring(0, 100) +' ...' %></p>
-        <a href="/posts/<%=post.title%>">Read More</a>
-    </div>  
-    <%} %>
+<form action="/delete" method="post">
+  <div>
+    <h2><%=post.title%></h2>
+    <p>
+      <%=post.text.substring(0, 100) +' ... ' %><a href="/posts/<%=post.title%>"
+        >Read More</a
+      >
+    </p>
 
+    <span>
+      <button
+        type="submit"
+        class="btn btn-outline-danger"
+        name="deleteButton"
+        value="<%= post._id %>"
+      >
+        Delete Blog
+      </button>
+    </span>
+  </div>
+</form>
 
-<%-include('partials/footer') %>
-
-
+<%} %> <%-include('partials/footer') %>

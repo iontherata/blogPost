@@ -31,7 +31,7 @@ const Blog = mongoose.model("Blog", blogSchema);
 
 const blog1 = new Blog({
   title: "Welcome",
-  text: "lorem50",
+  text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur dolorum blanditiis architecto nihil dolores quae debitis velit ipsa mollitia, laudantium quaerat perferendis consequatur totam iste sed, earum, pariatur suscipit veritatis ducimus accusamus repellat harum! Natus molestias libero delectus eveniet, accusamus eum? Accusamus delectus odio saepe suscipit ullam eos voluptatibus, asperiores dolore non ",
 });
 
 const blog2 = new Blog({
@@ -50,24 +50,20 @@ app.get("/", function (req, res) {
   Blog.find({})
     .then(function (foundItems) {
       if (foundItems.length === 0) {
-        Blog.insertMany(allBlogs)
-          .then(function () {
-            console.log("Inserted to DB");
-          })
-          .catch(function (err) {
-            console.log(err);
-          });
-          res.redirect('/')
+        Blog.insertMany(allBlogs);
+
+        res.redirect("/");
       } else {
-        res.render("home", {pageContent: homeStartingContent, posts: foundItems});
-      }  
+        res.render("home", {
+          pageContent: homeStartingContent,
+          posts: foundItems,
+        });
+      }
     })
     .catch(function (err) {
       console.log(err);
     });
 });
-
-
 
 app.get("/about", function (req, res) {
   res.render("about", { pageContent: aboutContent });
@@ -82,24 +78,37 @@ app.get("/compose", function (req, res) {
 });
 
 app.post("/compose", function (req, res) {
-  const post = {
+  const blog = new Blog({
     title: req.body.postTitle,
     text: req.body.postText,
-  };
-  posts.push(post);
-
+  });
+  blog.save();
+  // posts.push(post);
   res.redirect("/");
 });
 
-app.get("/posts/:blogPost", function (req, res) {
-  const requestedBlogPost = _.lowerCase(req.params.blogPost);
+app.post("/delete", async (req, res) => {
+  const deletedBlogID = req.body.deleteButton;
+  const deletedBlog = await Blog.findByIdAndRemove(deletedBlogID);
+  res.redirect("/");
+});
 
-  for (let post of posts) {
-    const storedTitle = _.lowerCase(post.title);
-    if (storedTitle === requestedBlogPost) {
-      res.render("blog", { title: post.title, text: post.text });
-    }
-  }
+app.get("/posts/:blogPost", async (req, res) => {
+  const blog = req.params.blogPost;
+  const blogPage = await Blog.findOne({ title: blog });
+  
+  
+    res.render('blog', {title: blogPage.title, text: blogPage.text})
+  
+  
+  // const requestedBlogPost = _.lowerCase(req.params.blogPost);
+
+  // for (let post of posts) {
+  //   const storedTitle = _.lowerCase(post.title);
+  //   if (storedTitle === requestedBlogPost) {
+  //     res.render("blog", { title: post.title, text: post.text });
+  //   }
+  // }
 });
 
 app.listen(3000, function () {
